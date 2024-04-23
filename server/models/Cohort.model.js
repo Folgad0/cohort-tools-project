@@ -1,5 +1,4 @@
-const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
+const { Schema, model } = require("mongoose");
 
 const cohortSchema = new Schema({
   cohortSlug: { type: String, unique: true },
@@ -10,11 +9,11 @@ const cohortSchema = new Schema({
   startDate: { type: Date, default: Date.now },
   endDate: { type: Date },
   inProgress: { type: Boolean, default: false },
-  programManager: { tape: String, required: true },
+  programManager: { type: String, required: true },
   leadTeacher: { type: String, required: true },
   totalHours: { type: Number, default: 360 }
 });
 
-const Cohort = mongoose.model("Cohort", cohortSchema);
+const Cohort = model("Cohort", cohortSchema);
 
 module.exports = Cohort;

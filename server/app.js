@@ -7,8 +7,8 @@ const mongoose = require("mongoose");
 const PORT = 5005;
 
 // Import your models here:
-const Cohort = require("./models/cohortModel");
-const Student = require("./models/studentModel");
+const Cohort = require("./models/Cohort.model");
+const Student = require("./models/Student.model");
 
 // INITIALIZE EXPRESS APP - https://expressjs.com/en/4x/api.html#express
 const app = express();
@@ -21,7 +21,7 @@ app.use(cors({
 // app.use(cors());  -> this allows access to all ports aka no bodyguard
 
 //mongoose setup 
-const databaseURL = 'mongodb://localhost/cohort-tools-api';
+const databaseURL = 'mongodb://localhost:27017/cohort-tools-api';
 mongoose
   .connect(databaseURL)
   .then(x => {
@@ -148,7 +148,7 @@ app.post("/api/students", async (req, res) => {
 //GET /api/students - Retrieves all of the students in the database collection
 app.get('/api/students', async (req, res) => {
   try {
-    const students = await Student.find();
+    const students = await Student.find().populate("cohort");
     res.json({ message: 'All students', data: students });
   } catch (err) {
     console.error(err);
@@ -160,7 +160,7 @@ app.get('/api/students', async (req, res) => {
 app.get('/api/students/cohort/:cohortId', async (req, res) => {
   const { cohortId } = req.params;
   try {
-    const students = await Student.find({ cohort: cohortId });
+    const students = await Student.find({ cohort: cohortId }).populate("cohort");
     res.json({ message: 'All students of the cohort', data: students });
   } catch (err) {
     console.error(err);
@@ -172,7 +172,7 @@ app.get('/api/students/cohort/:cohortId', async (req, res) => {
 app.get('/api/students/:studentId', async (req, res) => {
   const { studentId } = req.params;
   try {
-    const student = await Student.findById(studentId);
+    const student = await Student.findById(studentId).populate("cohort");
     if (!student) {
       return res.status(404).json({ error: "Student not found" });
     }
