@@ -5,13 +5,16 @@ const PORT = 5005;
 
 // STATIC DATA
 // Devs Team - Import the provided files with JSON data of students and cohorts here:
-// ...
+const express = require('express');
+const cors = require('cors');
+const mongoose = require('mongoose');
 
 
 // INITIALIZE EXPRESS APP - https://expressjs.com/en/4x/api.html#express
 const app = express();
 
 
+app.use(cors());
 // MIDDLEWARE
 // Research Team - Set up CORS middleware here:
 // ...
