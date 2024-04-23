@@ -1,7 +1,7 @@
-const mongoose = require("mongoose");
+const { Schema, model } = require('mongoose');
 
 // Define the Student Schema
-const studentSchema = new mongoose.Schema({
+const studentSchema = new Schema({
   firstName: {
     type: String,
     required: true
@@ -25,14 +25,13 @@ const studentSchema = new mongoose.Schema({
   background: String,
   image: String,
   cohort: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: Schema.Types.ObjectId,
     ref: "Cohort"
   },
   projects: [String]
-  // Add other fields as needed
 });
 
 // Create the Student model
-const Student = mongoose.model("Student", studentSchema);
+const Student = model("Student", studentSchema);
 
 module.exports = Student;
