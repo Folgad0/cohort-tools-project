@@ -4,7 +4,6 @@ const cookieParser = require("cookie-parser");
 const PORT = 5005;
 const cors = require("cors");
 const mongoose = require("mongoose");
-
 // Import your models here:
 const Cohort = require("./models/cohortModel");
 const Student = require("./models/studentModel");
@@ -70,89 +69,140 @@ app.post ("/api/cohorts", (req, res) => {
 
 //GET /api/cohorts - Retrieves all of the cohorts in the database collection
 app.get('/api/cohorts', async (req, res) => {
-  const cohorts = await Cohort.find();
-  res.json({ message: 'All cohorts', data: cohorts });
+  try {
+    const cohorts = await Cohort.find();
+    res.json({ message: 'All cohorts', data: cohorts });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to retrieve cohorts" });
+  }
 });
 
 //GET /api/cohorts/:cohortId - Retrieves a specific cohort by id
 app.get('/api/cohorts/:cohortId', async (req, res) => {
   const { cohortId } = req.params;
-  const cohort = await Cohort.findById(cohortId);
-  res.json({ message: 'Cohort found', data: cohort });
-})
+  try {
+    const cohort = await Cohort.findById(cohortId);
+    if (!cohort) {
+      return res.status(404).json({ error: "Cohort not found" });
+    }
+    res.json({ message: 'Cohort found', data: cohort });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to retrieve cohort" });
+  }
+});
 
 //PUT /api/cohorts/:cohortId - Updates a specific cohort by id
 app.put('/api/cohorts/:cohortId', async (req, res) => {
   const { cohortId } = req.params;
-  const cohort = await Cohort.findByIdAndUpdate(cohortId, req.body);
-  res.json({ message: 'Cohort updated', data: cohort });
+  try {
+    const cohort = await Cohort.findByIdAndUpdate(cohortId, req.body, { new: true });
+    if (!cohort) {
+      return res.status(404).json({ error: "Cohort not found" });
+    }
+    res.json({ message: 'Cohort updated', data: cohort });
+  } catch (err) {
+    console.error(err);
+    res.status(400).json({ error: "Failed to update cohort" });
+  }
 });
 
 //DELETE /api/cohorts/:cohortId - Deletes a specific cohort by id
 app.delete('/api/cohorts/:cohortId', async (req, res) => {
   const { cohortId } = req.params;
-  const cohort = await Cohort.findByIdAndDelete(cohortId);
-  res.json({ message: 'Cohort deleted', data: cohort });
+  try {
+    const cohort = await Cohort.findByIdAndDelete(cohortId);
+    if (!cohort) {
+      return res.status(404).json({ error: "Cohort not found" });
+    }
+    res.json({ message: 'Cohort deleted', data: cohort });
+  } catch (err) {
+    console.error(err);
+    res.status(400).json({ error: "Failed to delete cohort" });
+  }
 });
 
 
 //Student routes
-//POST /api/students - Creates a new student
-app.post("/api/students", (req, res) => {
-  Student.create({
-    firstName: req.body.firstName,
-    lastName: req.body.lastName,
-    email: req.body.email,
-    phone: req.body.phone,
-    linkedinUrl: req.body.linkedinUrl,
-    languages: req.body.languages,
-    program: req.body.program,
-    background: req.body.background,
-    image: req.body.image,
-    cohort: req.body.cohort,
-    projects: req.body.projects,
-  })
-  .then((newStudent) => {
+// POST /api/students - Creates a new student
+app.post("/api/students", async (req, res) => {
+  try {
+    const newStudent = await Student.create(req.body);
     res.json(newStudent);
-  })
-  .catch((err) => {
-    res.status(400).json(err);
-  });
+  } catch (err) {
+    console.error(err);
+    res.status(400).json({ error: "Failed to create student" });
+  }
 });
 
 //GET /api/students - Retrieves all of the students in the database collection
 app.get('/api/students', async (req, res) => {
-  const students = await Student.find();
-  res.json({ message: 'All students', data: students });
+  try {
+    const students = await Student.find();
+    res.json({ message: 'All students', data: students });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to retrieve students" });
+  }
 });
 
 //GET /api/students/cohort/:cohortId - Retrieves all of the students of a specific cohort
 app.get('/api/students/cohort/:cohortId', async (req, res) => {
   const { cohortId } = req.params;
-  const students = await Student.find({ cohort: cohortId });
-  res.json({ message: 'All students', data: students });
+  try {
+    const students = await Student.find({ cohort: cohortId });
+    res.json({ message: 'All students of the cohort', data: students });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to retrieve students of the cohort" });
+  }
 });
 
 //GET /api/students/:studentId - Retrieves a specific student by id
 app.get('/api/students/:studentId', async (req, res) => {
   const { studentId } = req.params;
-  const student = await Student.findById(studentId);
-  res.json({ message: 'Student found', data: student });
+  try {
+    const student = await Student.findById(studentId);
+    if (!student) {
+      return res.status(404).json({ error: "Student not found" });
+    }
+    res.json({ message: 'Student found', data: student });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to retrieve student" });
+  }
 });
 
 //PUT /api/students/:studentId - Updates a specific student by id
 app.put('/api/students/:studentId', async (req, res) => {
   const { studentId } = req.params;
-  const student = await Student.findByIdAndUpdate(studentId, req.body);
-  res.json({ message: 'Student updated', data: student });
+  try {
+    const student = await Student.findByIdAndUpdate(studentId, req.body, { new: true });
+    if (!student) {
+      return res.status(404).json({ error: "Student not found" });
+    }
+    res.json({ message: 'Student updated', data: student });
+  } catch (err) {
+    console.error(err);
+    res.status(400).json({ error: "Failed to update student" });
+  }
 });
 
 //DELETE /api/students/:studentId - Deletes a specific student by id
 app.delete('/api/students/:studentId', async (req, res) => {
   const { studentId } = req.params;
-  const student = await Student.findByIdAndDelete(studentId);
-  res.json({ message: 'Student deleted', data: student });
-}); 
+  try {
+    const student = await Student.findByIdAndDelete(studentId);
+    if (!student) {
+      return res.status(404).json({ error: "Student not found" });
+    }
+    res.json({ message: 'Student deleted', data: student });
+  } catch (err) {
+    console.error(err);
+    res.status(400).json({ error: "Failed to delete student" });
+  }
+});
 
 // START SERVER
 app.listen(PORT, () => {
