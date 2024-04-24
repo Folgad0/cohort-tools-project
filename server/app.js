@@ -6,14 +6,13 @@ const mongoose = require("mongoose");
 
 const PORT = 5005;
 
-// Import your models here:
+/// Import your models here:
 const Cohort = require("./models/Cohort.model");
 const Student = require("./models/Student.model");
 
+
 // INITIALIZE EXPRESS APP - https://expressjs.com/en/4x/api.html#express
 const app = express();
-// MIDDLEWARE
-// Research Team - Set up CORS middleware here:
 app.use(cors({
   origin: "http://localhost:5175" // acts like a security guard that only allows access to the port 5175 . this is the localhost of my frotnend/client side.
 }));
@@ -31,7 +30,6 @@ mongoose
     });
   })
   .catch(err => console.error("Error connecting to MongoDB", err));
-
 // ...
 app.use(cors({ origin: ["http://localhost:5173"] }));
 app.use(express.json());
@@ -40,33 +38,35 @@ app.use(express.static("public"));
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
+
 // ROUTES - https://expressjs.com/en/starter/basic-routing.html
 // Devs Team - Start working on the routes here:
 // ...
 app.get("/docs", (req, res) => {
   res.sendFile(__dirname + "/views/docs.html");
 });
-
 app.get("/", (req, res) => {
-  res.send("Welcome to the API");
+  res.send("Welcome to the API")
 });
 
 //cohort routes
-//POST /api/cohorts - Creates a new cohort
+//POST /api/cohorts- Creates a new cohort
+
 app.post("/api/cohorts", (req, res) => {
+  
   Cohort.create({
-    cohortSlug: req.body.cohortSlug,
-    cohortName: req.body.cohortName,
-    program: req.body.program,
-    format: req.body.format,
-    campus: req.body.campus,
-    startDate: req.body.startDate,
-    endDate: req.body.endDate,
-    inProgress: req.body.inProgress,
-    programManager: req.body.programManager,
-    leadTeacher: req.body.leadTeacher,
-    totalHours: req.body.totalHours,
-  })
+      cohortSlug: req.body.cohortSlug,
+      cohortName: req.body.cohortName,
+      program: req.body.program,
+      format: req.body.format,
+      campus: req.body.campus,
+      startDate: req.body.startDate,
+      endDate: req.body.endDate,
+      inProgress: req.body.inProgress,
+      programManager: req.body.programManager,
+      leadTeacher: req.body.leadTeacher,
+      totalHours: req.body.totalHours,
+    })
     .then((newCohort) => {
       res.json(newCohort);
     })
