@@ -3,6 +3,7 @@ const express = require("express");
 const morgan = require("morgan");
 const cookieParser = require("cookie-parser");
 const mongoose = require("mongoose");
+const { errorHandler, notFoundHandler } = require("./middleware/error-handling");
 
 const PORT = 5005;
 
@@ -169,7 +170,7 @@ app.get('/api/students/cohort/:cohortId', async (req, res) => {
 });
 
 //GET /api/students/:studentId - Retrieves a specific student by id
-app.get('/api/students/:studentId', async (req, res) => {
+app.get('/api/students/:studentId', async (req, res, next) => {
   const { studentId } = req.params;
   try {
     const student = await Student.findById(studentId).populate("cohort");
@@ -178,8 +179,9 @@ app.get('/api/students/:studentId', async (req, res) => {
     }
     res.json({ message: 'Student found', data: student });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Failed to retrieve student" });
+    next(err)
+    // console.error(err);
+    // res.status(500).json({ error: "Failed to retrieve student" });
   }
 });
 
@@ -213,3 +215,5 @@ app.delete('/api/students/:studentId', async (req, res) => {
   }
 });
 
+app.use(errorHandler);
+app.use(notFoundHandler);
