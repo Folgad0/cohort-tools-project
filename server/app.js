@@ -19,11 +19,17 @@ const app = express();
 // app.use(cors());  -> this allows access to all ports aka no bodyguard
 
 //mongoose setup 
-const databaseURL = 'mongodb://localhost/cohort-tools-api';
+const databaseURL = 'mongodb://localhost:27017/cohort-tools-api';
 mongoose
-.connect(databaseURL)
-.then(x => console.log(`Connected to Database: "${x.connections[0].name}"`))
-.catch(err => console.error("Error connecting to MongoDB", err));
+  .connect(databaseURL)
+  .then(x => {
+    console.log(`Connected to Database: "${x.connections[0].name}"`);
+    // START SERVER
+    app.listen(PORT, () => {
+      console.log(`Server listening on port ${PORT}`);
+    });
+  })
+  .catch(err => console.error("Error connecting to MongoDB", err));
 
 // ...
 app.use(express.json());
@@ -124,22 +130,10 @@ app.delete('/api/cohorts/:cohortId', async (req, res) => {
 });
 
 
-//Student routes
-// POST /api/students - Creates a new student
-app.post("/api/students", async (req, res) => {
-  try {
-    const newStudent = await Student.create(req.body);
-    res.json(newStudent);
-  } catch (err) {
-    console.error(err);
-    res.status(400).json({ error: "Failed to create student" });
-  }
-});
-
 //GET /api/students - Retrieves all of the students in the database collection
 app.get('/api/students', async (req, res) => {
   try {
-    const students = await Student.find();
+    const students = await Student.find().populate("cohort");
     res.json({ message: 'All students', data: students });
   } catch (err) {
     console.error(err);
@@ -151,7 +145,7 @@ app.get('/api/students', async (req, res) => {
 app.get('/api/students/cohort/:cohortId', async (req, res) => {
   const { cohortId } = req.params;
   try {
-    const students = await Student.find({ cohort: cohortId });
+    const students = await Student.find({ cohort: cohortId }).populate("cohort");
     res.json({ message: 'All students of the cohort', data: students });
   } catch (err) {
     console.error(err);
@@ -163,7 +157,7 @@ app.get('/api/students/cohort/:cohortId', async (req, res) => {
 app.get('/api/students/:studentId', async (req, res) => {
   const { studentId } = req.params;
   try {
-    const student = await Student.findById(studentId);
+    const student = await Student.findById(studentId).populate("cohort");
     if (!student) {
       return res.status(404).json({ error: "Student not found" });
     }
@@ -202,9 +196,4 @@ app.delete('/api/students/:studentId', async (req, res) => {
     console.error(err);
     res.status(400).json({ error: "Failed to delete student" });
   }
-});
-
-// START SERVER
-app.listen(PORT, () => {
-  console.log(`Server listening on port ${PORT}`);
 });
