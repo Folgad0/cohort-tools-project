@@ -3,13 +3,11 @@ const express = require("express");
 const morgan = require("morgan");
 const cookieParser = require("cookie-parser");
 const mongoose = require("mongoose");
+const cohortRoutes = require("./route/cohort.route");
+const studentRoutes = require("./route/student.route");
 const { errorHandler, notFoundHandler } = require("./middleware/error-handling");
 
 const PORT = 5005;
-
-// Import your models here:
-const Cohort = require("./models/Cohort.model");
-const Student = require("./models/Student.model");
 
 // INITIALIZE EXPRESS APP - https://expressjs.com/en/4x/api.html#express
 const app = express();
@@ -54,166 +52,11 @@ app.get("/", (req, res) => {
 });
 
 //cohort routes
-//POST /api/cohorts - Creates a new cohort
-app.post("/api/cohorts", (req, res) => {
-  Cohort.create({
-    cohortSlug: req.body.cohortSlug,
-    cohortName: req.body.cohortName,
-    program: req.body.program,
-    format: req.body.format,
-    campus: req.body.campus,
-    startDate: req.body.startDate,
-    endDate: req.body.endDate,
-    inProgress: req.body.inProgress,
-    programManager: req.body.programManager,
-    leadTeacher: req.body.leadTeacher,
-    totalHours: req.body.totalHours,
-  })
-    .then((newCohort) => {
-      res.json(newCohort);
-    })
-    .catch((err) => {
-      res.status(400).json(err);
-    });
-});
-
-//GET /api/cohorts - Retrieves all of the cohorts in the database collection
-app.get('/api/cohorts', async (req, res) => {
-  try {
-    const cohorts = await Cohort.find();
-    res.json({ message: 'All cohorts', data: cohorts });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Failed to retrieve cohorts" });
-  }
-});
-
-//GET /api/cohorts/:cohortId - Retrieves a specific cohort by id
-app.get('/api/cohorts/:cohortId', async (req, res) => {
-  const { cohortId } = req.params;
-  try {
-    const cohort = await Cohort.findById(cohortId);
-    if (!cohort) {
-      return res.status(404).json({ error: "Cohort not found" });
-    }
-    res.json({ message: 'Cohort found', data: cohort });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Failed to retrieve cohort" });
-  }
-});
-
-//PUT /api/cohorts/:cohortId - Updates a specific cohort by id
-app.put('/api/cohorts/:cohortId', async (req, res) => {
-  const { cohortId } = req.params;
-  try {
-    const cohort = await Cohort.findByIdAndUpdate(cohortId, req.body, { new: true });
-    if (!cohort) {
-      return res.status(404).json({ error: "Cohort not found" });
-    }
-    res.json({ message: 'Cohort updated', data: cohort });
-  } catch (err) {
-    console.error(err);
-    res.status(400).json({ error: "Failed to update cohort" });
-  }
-});
-
-//DELETE /api/cohorts/:cohortId - Deletes a specific cohort by id
-app.delete('/api/cohorts/:cohortId', async (req, res) => {
-  const { cohortId } = req.params;
-  try {
-    const cohort = await Cohort.findByIdAndDelete(cohortId);
-    if (!cohort) {
-      return res.status(404).json({ error: "Cohort not found" });
-    }
-    res.json({ message: 'Cohort deleted', data: cohort });
-  } catch (err) {
-    console.error(err);
-    res.status(400).json({ error: "Failed to delete cohort" });
-  }
-});
-
+app.use("/api/cohorts", cohortRoutes);
 
 //Student routes
-// POST /api/students - Creates a new student
-app.post("/api/students", async (req, res) => {
-  try {
-    const newStudent = await Student.create(req.body);
-    res.json(newStudent);
-  } catch (err) {
-    console.error(err);
-    res.status(400).json({ error: "Failed to create student" });
-  }
-});
+app.use("/api/students", studentRoutes);
 
-//GET /api/students - Retrieves all of the students in the database collection
-app.get('/api/students', async (req, res) => {
-  try {
-    const students = await Student.find().populate("cohort");
-    res.json({ message: 'All students', data: students });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Failed to retrieve students" });
-  }
-});
-
-//GET /api/students/cohort/:cohortId - Retrieves all of the students of a specific cohort
-app.get('/api/students/cohort/:cohortId', async (req, res) => {
-  const { cohortId } = req.params;
-  try {
-    const students = await Student.find({ cohort: cohortId }).populate("cohort");
-    res.json({ message: 'All students of the cohort', data: students });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Failed to retrieve students of the cohort" });
-  }
-});
-
-//GET /api/students/:studentId - Retrieves a specific student by id
-app.get('/api/students/:studentId', async (req, res, next) => {
-  const { studentId } = req.params;
-  try {
-    const student = await Student.findById(studentId).populate("cohort");
-    if (!student) {
-      return res.status(404).json({ error: "Student not found" });
-    }
-    res.json({ message: 'Student found', data: student });
-  } catch (err) {
-    next(err)
-    // console.error(err);
-    // res.status(500).json({ error: "Failed to retrieve student" });
-  }
-});
-
-//PUT /api/students/:studentId - Updates a specific student by id
-app.put('/api/students/:studentId', async (req, res) => {
-  const { studentId } = req.params;
-  try {
-    const student = await Student.findByIdAndUpdate(studentId, req.body, { new: true });
-    if (!student) {
-      return res.status(404).json({ error: "Student not found" });
-    }
-    res.json({ message: 'Student updated', data: student });
-  } catch (err) {
-    console.error(err);
-    res.status(400).json({ error: "Failed to update student" });
-  }
-});
-
-//DELETE /api/students/:studentId - Deletes a specific student by id
-app.delete('/api/students/:studentId', async (req, res) => {
-  const { studentId } = req.params;
-  try {
-    const student = await Student.findByIdAndDelete(studentId);
-    if (!student) {
-      return res.status(404).json({ error: "Student not found" });
-    }
-    res.json({ message: 'Student deleted', data: student });
-  } catch (err) {
-    console.error(err);
-    res.status(400).json({ error: "Failed to delete student" });
-  }
-});
-
+// Error handling middleware
 app.use(errorHandler);
 app.use(notFoundHandler);
