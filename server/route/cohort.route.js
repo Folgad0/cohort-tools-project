@@ -30,7 +30,7 @@ router.post("/", (req, res, next) => {
 router.get('/', async (req, res, next) => {
   try {
     const cohorts = await Cohort.find();
-    res.status(200).json({ message: 'All cohorts', data: cohorts });
+    res.status(200).json(cohorts);
   } catch (err) {
     console.error("Failed to fetch cohort data");
     next(err);
@@ -45,7 +45,7 @@ router.get('/:cohortId', async (req, res, next) => {
     if (!cohort) {
       return res.status(404).json({ error: "Cohort not found" });
     }
-    res.json({ message: 'Cohort found', data: cohort });
+    res.json(cohort);
   } catch (err) {
     console.error("Failed to fetch data with id:", cohortId);
     next(err);
@@ -60,7 +60,7 @@ router.put('/:cohortId', async (req, res, next) => {
     if (!cohort) {
       return res.status(404).json({ error: "Cohort not found" });
     }
-    res.json({ message: 'Cohort updated', data: cohort });
+    res.json(cohort);
   } catch (err) {
     console.error("Failed to update data with id:", cohortId);
     next(err);
@@ -75,7 +75,7 @@ router.delete('/:cohortId', async (req, res, next) => {
     if (!cohort) {
       return res.status(404).json({ error: "Cohort not found" });
     }
-    res.json({ message: 'Cohort deleted', data: cohort });
+    res.json(cohort);
   } catch (err) {
     console.error("Failed to delete data with id:", cohortId);
     next(err);

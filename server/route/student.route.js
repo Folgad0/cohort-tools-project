@@ -16,7 +16,7 @@ router.post("/", async (req, res, next) => {
 router.get('/', async (req, res, next) => {
   try {
     const students = await Student.find().populate("cohort");
-    res.json({ message: 'All students', data: students });
+    res.json(students);
   } catch (err) {
     console.error("Failed to fetch students data");
     next(err);
@@ -28,7 +28,7 @@ router.get('/cohort/:cohortId', async (req, res, next) => {
   const { cohortId } = req.params;
   try {
     const students = await Student.find({ cohort: cohortId }).populate("cohort");
-    res.json({ message: 'All students of the cohort', data: students });
+    res.json(students);
   } catch (err) {
     console.error("Failed to fetch students of cohort id: ", cohortId);
     next(err);
@@ -43,7 +43,7 @@ router.get('/:studentId', async (req, res, next) => {
     if (!student) {
       return res.status(404).json({ error: "Student not found" });
     }
-    res.json({ message: 'Student found', data: student });
+    res.json(student);
   } catch (err) {
     console.error("Failed to fetch students of id: ", studentId);
     next(err);
@@ -58,7 +58,7 @@ router.put('/:studentId', async (req, res, next) => {
     if (!student) {
       return res.status(404).json({ error: "Student not found" });
     }
-    res.json({ message: 'Student updated', data: student });
+    res.json(student);
   } catch (err) {
     console.error("Failed to update students of id: ", studentId);
     next(err);
@@ -73,7 +73,7 @@ router.delete('/:studentId', async (req, res, next) => {
     if (!student) {
       return res.status(404).json({ error: "Student not found" });
     }
-    res.json({ message: 'Student deleted', data: student });
+    res.json(student);
   } catch (err) {
     console.error("Failed to delete students of id: ", studentId);
     next(err);
