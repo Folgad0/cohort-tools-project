@@ -12,7 +12,7 @@ router.post("/", async (req, res, next) => {
   }
 });
 
-//GET /api/students - Retrieves all of the students in the database collection
+//GET /api/students - Retrieves all of the students in the database collection     something wrong here ?
 router.get('/', async (req, res, next) => {
   try {
     const students = await Student.find().populate("cohort");
