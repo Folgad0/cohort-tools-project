@@ -23,7 +23,7 @@
 //   const [cohorts, setCohorts] = useState([]);
 //   const [loading, setLoading] = useState(true);
 //   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
-  
+
 //   const { studentId } = useParams();
 
 //   const navigate = useNavigate();
@@ -220,14 +220,13 @@
 //           Save
 //         </button>
 
-//         <button disabled={loading} type="button" onClick={()=> setShowDeleteConfirmation(true)}>Delete</button>        
+//         <button disabled={loading} type="button" onClick={()=> setShowDeleteConfirmation(true)}>Delete</button>
 //       </form>
 //     </div>
 //   );
 // }
 
 // export default StudentEditPage;
-
 
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
