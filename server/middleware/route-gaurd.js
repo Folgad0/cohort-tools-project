@@ -10,4 +10,18 @@ const isAuthenticated = (req, res, next) => {
   }
 }
 
-module.exports = { isAuthenticated };
+const isAdmin = async (req, res, next) => {
+  const { userId } = req.tokenPayload
+  try {
+    const user = await User.findById(userId)
+    if (user.roles.includes('ADMIN')) {
+      next()
+    } else {
+      res.status(403).json('You shall not pass')
+    }
+  } catch (error) {
+    res.status(500).json(error)
+  }
+}
+
+module.exports = { isAuthenticated, isAdmin };
