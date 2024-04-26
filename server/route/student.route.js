@@ -1,8 +1,9 @@
 const Student = require("../models/Student.model");
 const router = require("express").Router();
+const { isAuthenticated } = require("../middleware/route-gaurd");
 
 // POST /api/students - Creates a new student
-router.post("/", async (req, res, next) => {
+router.post("/", isAuthenticated, async (req, res, next) => {
   try {
     const newStudent = await Student.create(req.body);
     res.json(newStudent);
@@ -12,7 +13,7 @@ router.post("/", async (req, res, next) => {
   }
 });
 
-//GET /api/students - Retrieves all of the students in the database collection     something wrong here ?
+//GET /api/students - Retrieves all of the students in the database collection
 router.get('/', async (req, res, next) => {
   try {
     const students = await Student.find().populate("cohort");
@@ -51,7 +52,7 @@ router.get('/:studentId', async (req, res, next) => {
 });
 
 //PUT /api/students/:studentId - Updates a specific student by id
-router.put('/:studentId', async (req, res, next) => {
+router.put('/:studentId', isAuthenticated, async (req, res, next) => {
   const { studentId } = req.params;
   try {
     const student = await Student.findByIdAndUpdate(studentId, req.body, { new: true });
@@ -66,7 +67,7 @@ router.put('/:studentId', async (req, res, next) => {
 });
 
 //DELETE /api/students/:studentId - Deletes a specific student by id
-router.delete('/:studentId', async (req, res, next) => {
+router.delete('/:studentId', isAuthenticated, async (req, res, next) => {
   const { studentId } = req.params;
   try {
     const student = await Student.findByIdAndDelete(studentId);

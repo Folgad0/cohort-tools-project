@@ -1,28 +1,18 @@
-const { Schema, model } = require('mongoose')
+const { Schema, model } = require("mongoose");
 
-// TODO: Please make sure you edit the Book model to whatever makes sense in this case
-const userSchema = new Schema(
-  {
-    username: { 
-      type: String, 
-      required: true,
-      trim: true,
-      unique: true},
-    email: {
-      type: String,
-      required: true,
-      unique: true,
-      trim: true,
-    },
-    passwordHash: { type: String, required: true },
-    
+const userSchema = new Schema({
+  email: {
+    type: String,
+    unique: true,
+    required: true
   },
-  {
-    // this second object adds extra properties: `createdAt` and `updatedAt`
-    timestamps: true,
-  }
-)
+  hashPassword: {
+    type: String,
+    required: true
+  },
+  name: String
+});
 
-const User = model('User', userSchema)
+const User = model("User", userSchema);
 
-module.exports = User
+module.exports = User;
