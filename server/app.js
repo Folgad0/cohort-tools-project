@@ -1,13 +1,17 @@
+require('dotenv').config();
 const cors = require("cors");
 const express = require("express");
 const morgan = require("morgan");
 const cookieParser = require("cookie-parser");
 const mongoose = require("mongoose");
+const authRoutes = require("./route/auth.route");
+const userRoutes = require("./route/user.route");
 const cohortRoutes = require("./route/cohort.route");
 const studentRoutes = require("./route/student.route");
 const { errorHandler, notFoundHandler } = require("./middleware/error-handling");
 
 const PORT = 5005;
+const PORT = process.env.PORT
 
 // INITIALIZE EXPRESS APP - https://expressjs.com/en/4x/api.html#express
 const app = express();
@@ -50,6 +54,12 @@ app.get("/docs", (req, res) => {
 app.get("/", (req, res) => {
   res.send("Welcome to the API");
 });
+
+//Auth routes
+app.use("/auth", authRoutes);
+
+//User routes
+app.use("/api/users", userRoutes);
 
 //cohort routes
 app.use("/api/cohorts", cohortRoutes);
