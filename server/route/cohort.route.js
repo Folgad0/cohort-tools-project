@@ -1,9 +1,10 @@
 const { mongoose } = require("mongoose");
 const Cohort = require("../models/Cohort.model");
+const { isAuthenticated } = require("../middleware/route-gaurd");
 const router = require("express").Router();
 
 //POST /api/cohorts - Creates a new cohort
-router.post("/", (req, res, next) => {
+router.post("/", isAuthenticated, (req, res, next) => {
   Cohort.create({
     cohortSlug: req.body.cohortSlug,
     cohortName: req.body.cohortName,
@@ -53,7 +54,7 @@ router.get('/:cohortId', async (req, res, next) => {
 });
 
 //PUT /api/cohorts/:cohortId - Updates a specific cohort by id
-router.put('/:cohortId', async (req, res, next) => {
+router.put('/:cohortId', isAuthenticated, async (req, res, next) => {
   const { cohortId } = req.params;
   try {
     const cohort = await Cohort.findByIdAndUpdate(cohortId, req.body, { new: true, runValidators: true });
@@ -68,7 +69,7 @@ router.put('/:cohortId', async (req, res, next) => {
 });
 
 //DELETE /api/cohorts/:cohortId - Deletes a specific cohort by id
-router.delete('/:cohortId', async (req, res, next) => {
+router.delete('/:cohortId', isAuthenticated, async (req, res, next) => {
   const { cohortId } = req.params;
   try {
     const cohort = await Cohort.findByIdAndDelete(cohortId);

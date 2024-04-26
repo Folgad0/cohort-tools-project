@@ -10,7 +10,7 @@ const cohortRoutes = require("./route/cohort.route");
 const studentRoutes = require("./route/student.route");
 const { errorHandler, notFoundHandler } = require("./middleware/error-handling");
 
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 5005;
 
 // INITIALIZE EXPRESS APP - https://expressjs.com/en/4x/api.html#express
 const app = express();

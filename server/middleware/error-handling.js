@@ -6,7 +6,7 @@ const errorHandler = (err, req, res, next) => {
       error[key] = err.errors[key].message;
     });
     res.status(400).json(error);
-  } else if (err.name == "CastError") {
+  } else if (err.name == "CastError" || err.name === "MongoServerError") {
     res.status(400).json({ message: err.message })
   } else {
     res.status(500).json({ message: "Internal server error occured." });
